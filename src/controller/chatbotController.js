@@ -32,7 +32,7 @@ export function getWebhook(req, res) {
 
 export function postWebhook(req,res) {
     let body = req.body;
-    console.log(`Received webhook:`);
+    console.log(req);
     // console.dir(body, { depth: null });
     if (body.object === "page") {
         // Returns a '200 OK' response to all requests
