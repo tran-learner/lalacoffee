@@ -30,7 +30,7 @@ export function getWebhook(req, res) {
     }
 }
 
-export function postWebhook() {
+export function postWebhook(req,res) {
     let body = req.body;
     console.log(`Received webhook:`);
     // console.dir(body, { depth: null });
