@@ -6,7 +6,8 @@ export function getHomePage(req, res) {
 }
 
 export function getWebhook(req, res) { 
-    let VERIFY_TOKEN = process.env.VERIFY_TOKEN
+    let VERIFY_TOKEN = 'asdfasdf'
+    console.log(VERIFY_TOKEN)
     // Parse the query params
     let mode = req.query["hub.mode"];
     let token = req.query["hub.verify_token"];
