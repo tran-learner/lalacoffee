@@ -37,7 +37,6 @@ export function postWebhook(req,res) {
         body.entry.forEach(entry => {
             let webhook_event = entry.messaging[0]
             let sender_psid = webhook_event.sender.id
-            console.log("SENDER ID IS ",sender_psid)
             if (webhook_event.message){
                 handleMessage(sender_psid,webhook_event.message)
             }
@@ -72,6 +71,7 @@ function callSendAPI(sender_psid, response){
 
 function handleMessage(sender_psid, received_message){
     let response
+    console.log(received_message)
     if (received_message.text){
         response = {
             "text":`You said ${received_message.text}`
