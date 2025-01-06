@@ -2,12 +2,13 @@ import dotenv from "dotenv"
 dotenv.config()
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
+const VERIFY_TOKEN = process.env.VERIFY_TOKEN
+
 export function getHomePage(req, res) {
     return res.send("Hiiii")
 }
 
 export function getWebhook(req, res) { 
-    let VERIFY_TOKEN = process.env.VERIFY_TOKEN
     console.log(VERIFY_TOKEN)
     // Parse the query params
     let mode = req.query["hub.mode"];
@@ -32,7 +33,7 @@ export function getWebhook(req, res) {
 export function postWebhook() {
     let body = req.body;
     console.log(`Received webhook:`);
-    console.dir(body, { depth: null });
+    // console.dir(body, { depth: null });
     if (body.object === "page") {
         // Returns a '200 OK' response to all requests
         res.status(200).send("EVENT_RECEIVED");
