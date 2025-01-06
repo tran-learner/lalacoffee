@@ -1,12 +1,13 @@
 import dotenv from "dotenv"
 dotenv.config()
 
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
 export function getHomePage(req, res) {
     return res.send("Hiiii")
 }
 
 export function getWebhook(req, res) { 
-    let VERIFY_TOKEN = 'asdfasdf'
+    let VERIFY_TOKEN = process.env.VERIFY_TOKEN
     console.log(VERIFY_TOKEN)
     // Parse the query params
     let mode = req.query["hub.mode"];
