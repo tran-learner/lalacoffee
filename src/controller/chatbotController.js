@@ -33,8 +33,9 @@ export function getWebhook(req, res) {
 
 export function postWebhook(req,res) {
     let body = req.body;
-    console.log(req);
     if (body.object === "page") {
+        console.log('get in page')
+        return
         body.entry.forEach(entry => {
             let webhook_event = entry.messaging[0]
             let sender_psid = webhook_event.sender.id
