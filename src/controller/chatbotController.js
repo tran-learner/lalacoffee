@@ -1,4 +1,5 @@
 import dotenv from "dotenv"
+import request from "request"
 dotenv.config()
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
@@ -33,12 +34,48 @@ export function getWebhook(req, res) {
 export function postWebhook(req,res) {
     let body = req.body;
     console.log(req);
-    // console.dir(body, { depth: null });
     if (body.object === "page") {
-        // Returns a '200 OK' response to all requests
+        body.entry.forEach(entry => {
+            let webhook_event = entry.messaging[0]
+            let sender_psid = webhook_event.sender.id
+            if (webhook_event.message){
+                handleMessage(sender_psid,webhook_event.message)
+            }
+        });        
         res.status(200).send("EVENT_RECEIVED");
     } else {
-        // Return a '404 Not Found' if event is not from a page subscription
         res.sendStatus(404);
     }
+}
+
+function callSendAPI(sender_psid, response){
+    let request_body = {
+        "recipent":{
+            "id":sender_psid
+        },
+        "message":response
+    }
+
+    request({
+        "uri":"https://graph.facebook.com/v21.0/me/messages",
+        "qs":{"access_token":PAGE_ACCESS_TOKEN},
+        "method":"POST",
+        "json": request_body
+    },(err,res,body)=>{
+        if (!err){
+            console.log("Sent message to KT!")
+        } else {
+            console.log(err)
+        }
+    })
+}
+
+function handleMessage(sender_psid, received_message){
+    let response
+    if (received_message.text){
+        response = {
+            "text":`You said ${received_message.text}`
+        }
+    }
+    callSendAPI(sender_psid,response)
 }
