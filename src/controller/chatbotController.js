@@ -49,7 +49,7 @@ export function postWebhook(req,res) {
 
 function callSendAPI(sender_psid, response){
     let request_body = {
-        "recipent":{
+        "recipient":{
             "id":sender_psid
         },
         "message":response
