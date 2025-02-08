@@ -1,1 +1,0 @@
-export const modelEndPoint = "https://runtime.sagemaker.ap-southeast-2.amazonaws.com/endpoints/canvas-MyFirstDeploy/invocations"

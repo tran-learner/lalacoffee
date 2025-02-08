@@ -3,32 +3,39 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const { AWS_MODEL_ENDPOINT: ENDPOINT, AWS_REGION: REGION, AWS_ACCESS_KEY_ID: ACCESS_KEY, AWS_SECRET_ACCESS_KEY: SECRET_KEY } = process.env;
+const { AWS_MODEL_ENDPOINT, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY} = process.env;
 
+export function writeout(){
+    console.log(AWS_MODEL_ENDPOINT, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+}
 const client = new SageMakerRuntimeClient({
-    region: REGION,
+    region: "ap-southeast-2",
     credentials: {
-        accessKeyId: ACCESS_KEY,
-        secretAccessKey: SECRET_KEY
+        accessKeyId: "AKIAR3HUONQYA3PP6PFM",
+        secretAccessKey: "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"
     }
 });
 
-const predict = async (imageBase64) => {
+app.post("/predict", async (req, res) => {
     try {
+        // Nhận dữ liệu ảnh từ request
+        const imageBuffer = req.body;
+
+        // Gửi ảnh đến SageMaker
         const command = new InvokeEndpointCommand({
-            EndpointName: ENDPOINT, 
-            Body: JSON.stringify({ image: imageBase64 }),
-            ContentType: "application/json"
+            EndpointName: "canvas-MyFirstDeploy",
+            Body: imageBuffer,
+            ContentType: "image/png"  // Hoặc "image/jpeg" nếu bạn gửi ảnh JPG
         });
 
         const response = await client.send(command);
         const result = new TextDecoder("utf-8").decode(response.Body);
 
-        return JSON.parse(result);
+        res.json(JSON.parse(result));
     } catch (error) {
         console.error("Error:", error);
-        return null;
+        res.status(500).json({ error: "Server Error" });
     }
-};
+});
 
 export default predict;
