@@ -1,4 +1,5 @@
 import express from "express"
+import predict from "./controller/modelController.js"
 // import viewEngine from "./config/viewEngine.js"
 // import initWebRoutes from "./routes/web.js"
 
@@ -22,6 +23,16 @@ app.use(bodyParser.urlencoded({extended:true}))
 
 //init web routes
 initWebRoutes(app)
+
+app.post("/analyze", async (req, res) => {
+    try {
+        const { image } = req.body; // Nhận ảnh từ request
+        const result = await predict(image);
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 
 let port = process.env.PORT || 8080
 app.listen(port, function (){
