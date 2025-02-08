@@ -19,15 +19,20 @@ dotenv.config()
 
 
 //config body-parser
-app.use(bodyParser.json({ limit: "50mb" }))
-app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }))
+
+// app.use(express.raw({ type: "image/*", limit: "50mb" }));  
+
+// app.use(bodyParser.json({ limit: "50mb" }))
+// app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }))
+app.use(express.raw({ type: "image/*", limit: "50mb" }));  
 
 //init web routes
 initWebRoutes(app)
-writeout()
 app.post("/analyze", async (req, res) => {
     try {
-        const { image } = req.body; // Nhận ảnh từ request
+        console.log(`REQ BODY IS ${req.body.length}`)
+        const image = req.body; // Nhận ảnh từ request
+        console.log(image)
         const result = await predict(image);
         res.json(result);
     } catch (error) {

@@ -16,26 +16,40 @@ const client = new SageMakerRuntimeClient({
     }
 });
 
-app.post("/predict", async (req, res) => {
-    try {
-        // Nhận dữ liệu ảnh từ request
-        const imageBuffer = req.body;
+// const predict = async (imageBase64) => {
+//     try {
+//         const command = new InvokeEndpointCommand({
+//             EndpointName: "canvas-MyFirstDeploy", 
+//             Body: ,
+//             ContentType: "image/png"
+//         });
 
-        // Gửi ảnh đến SageMaker
+//         const response = await client.send(command);
+//         const result = new TextDecoder("utf-8").decode(response.Body);
+
+//         return JSON.parse(result);
+//     } catch (error) {
+//         console.error("Error:", error);
+//         return null;
+//     }
+// };
+
+const predict = async (imageBuffer) => {
+    try {
         const command = new InvokeEndpointCommand({
-            EndpointName: "canvas-MyFirstDeploy",
-            Body: imageBuffer,
-            ContentType: "image/png"  // Hoặc "image/jpeg" nếu bạn gửi ảnh JPG
+            EndpointName: "canvas-MyFirstDeploy",  
+            Body: imageBuffer, // Gửi buffer ảnh trực tiếp
+            ContentType: "image/png"  // Nếu gửi ảnh JPG thì đổi thành "image/jpeg"
         });
 
         const response = await client.send(command);
         const result = new TextDecoder("utf-8").decode(response.Body);
-
-        res.json(JSON.parse(result));
+        console.log('RESULT ISSSSSSS ',result)
+        // return JSON.parse(result);
+        return result
     } catch (error) {
         console.error("Error:", error);
-        res.status(500).json({ error: "Server Error" });
+        return null;
     }
-});
-
+};
 export default predict;
