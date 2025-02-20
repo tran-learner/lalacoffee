@@ -80,7 +80,7 @@ function handleMessage(sender_psid, received_message) {
         }
     }
     else if (received_message.attachments) {
-        let attachment = received_message.attachment[0]
+        let attachment = received_message.attachments[0]
         if (attachment.type == "image") {
             //call image handle functions
             response = {
