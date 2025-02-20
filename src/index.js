@@ -22,8 +22,8 @@ dotenv.config()
 
 // app.use(express.raw({ type: "image/*", limit: "50mb" }));  
 
-// app.use(bodyParser.json({ limit: "50mb" }))
-// app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }))
+app.use(bodyParser.json({ limit: "50mb" }))
+app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }))
 app.use(express.raw({ type: "image/*", limit: "50mb" }));  
 
 //init web routes
@@ -42,5 +42,5 @@ app.post("/analyze", async (req, res) => {
 
 let port = process.env.PORT || 8080
 app.listen(port, function (){
-    console.log("i'm tired. ", `http://localhost:${port}`)
+    console.log("Server is running at ", `http://localhost:${port}`)
 })

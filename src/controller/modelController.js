@@ -16,35 +16,18 @@ const client = new SageMakerRuntimeClient({
     }
 });
 
-// const predict = async (imageBase64) => {
-//     try {
-//         const command = new InvokeEndpointCommand({
-//             EndpointName: "canvas-MyFirstDeploy", 
-//             Body: ,
-//             ContentType: "image/png"
-//         });
-
-//         const response = await client.send(command);
-//         const result = new TextDecoder("utf-8").decode(response.Body);
-
-//         return JSON.parse(result);
-//     } catch (error) {
-//         console.error("Error:", error);
-//         return null;
-//     }
-// };
 
 const predict = async (imageBuffer) => {
     try {
         const command = new InvokeEndpointCommand({
-            EndpointName: "canvas-MyFirstDeploy",  
+            EndpointName: "canvas-deploy3",  
             Body: imageBuffer, // Gửi buffer ảnh trực tiếp
             ContentType: "image/png"  // Nếu gửi ảnh JPG thì đổi thành "image/jpeg"
         });
 
         const response = await client.send(command);
         const result = new TextDecoder("utf-8").decode(response.Body);
-        console.log('RESULT ISSSSSSS ',result)
+        console.log('RESULT IS ',result)
         // return JSON.parse(result);
         return result
     } catch (error) {
