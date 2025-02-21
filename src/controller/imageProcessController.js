@@ -36,12 +36,11 @@ export async function downloadImage(imageUrl) {
 }
 
 export async function postToAWS(filePath) {
-    let result
-    fs.readFile(filePath, async (err, data) => {
-        if (err) {
-            console.log("Failed to read file. ", err)
-        }
-        result = await predict(data)
-    })
-    return result
+    try {
+        const data = await fs.readFile(filePath)
+        const result = await predict(data)
+        return result
+    } catch (e){
+        console.log('Failed to read file. ',e)
+    }
 }
