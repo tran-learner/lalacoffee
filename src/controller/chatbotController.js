@@ -1,6 +1,6 @@
 import dotenv from "dotenv"
 import request from "request"
-import { downloadImage } from "./imageProcessController"
+import { downloadImage } from "./imageProcessController.js"
 dotenv.config()
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
