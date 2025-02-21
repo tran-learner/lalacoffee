@@ -1,5 +1,6 @@
 import dotenv from "dotenv"
 import request from "request"
+import { downloadImage } from "./imageProcessController"
 dotenv.config()
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
@@ -83,6 +84,11 @@ function handleMessage(sender_psid, received_message) {
         let attachment = received_message.attachments[0]
         if (attachment.type == "image") {
             //call image handle functions
+                //get image from fb server
+                let imgURL = attachment.payload.url
+                downloadImage(imgURL)
+                //send image to aws
+                //delete image
             response = {
                 "text": `Bạn vừa gửi một ảnh`
             }
