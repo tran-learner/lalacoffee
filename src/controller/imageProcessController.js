@@ -1,5 +1,6 @@
 import fs from "fs"
 import axios from "axios"
+import predict from "./modelController.js"
 
 export async function downloadImage(imageUrl) {
     try {
@@ -16,7 +17,19 @@ export async function downloadImage(imageUrl) {
         writer.on('finish', async () => {
             console.log("Image loaded to server successfully. ", filePath)
         })
+        return filePath
     } catch (e) {
         console.log(`Lỗi xử lý ảnh: ${e}`)
     }
+}
+
+export async function postToAWS(filePath){
+    let result
+    fs.readFile(filePath, async (err, data)=>{
+        if (err){
+            console.log("Failed to read file. ",err)
+        }
+        result = await predict(data)
+    })
+    return result
 }
