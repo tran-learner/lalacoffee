@@ -32,7 +32,8 @@ export function getWebhook(req, res) {
     }
 }
 
-//fb post to /webhook => the srv process => send answer to client
+//fb post to webhook => server consider type of data => if img, send to aws => process result from aws
+//=> send answer to client
 export function postWebhook(req, res) {
     let body = req.body;
     if (body.object === "page") {
@@ -50,6 +51,7 @@ export function postWebhook(req, res) {
 }
 
 function callSendAPI(sender_psid, response) {
+    console.log("SENDER ID IS ",sender_psid)
     let request_body = {
         "recipient": {
             "id": sender_psid
@@ -73,7 +75,7 @@ function callSendAPI(sender_psid, response) {
 
 async function handleMessage(sender_psid, received_message) {
     let response
-    console.log(received_message)
+    console.log('RECIEVED MESSAGE IS ',received_message)
     if (received_message.text) {
         //call text handle functions
         response = {
@@ -84,15 +86,12 @@ async function handleMessage(sender_psid, received_message) {
         let attachment = received_message.attachments[0]
         if (attachment.type == "image") {
             //call image handle functions
-                //get image from fb server
-                let imgURL = attachment.payload.url
-                console.log("Path of image is ", imgURL)
-                const filepath = await downloadImage(imgURL)
-                //send image to aws
+                let imgURL = attachment.payload.url //get img at fb server
+                const filepath = await downloadImage(imgURL) //save img to server
                 const result = await postToAWS(filepath)
                 //delete image
             response = {
-                "text": `Bạn vừa gửi một ảnh, ${result}`
+                "text": `${result.label}`
             }
         }
         else {

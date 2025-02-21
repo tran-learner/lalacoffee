@@ -1,35 +1,21 @@
-import fs from "fs"
+import fs from "fs/promises"
 import axios from "axios"
 import predict from "./modelController.js"
 
 export async function downloadImage(imageUrl) {
     try {
-        await fs.promises.mkdir("./uploads", { recursive: true })
+        await fs.mkdir("./uploads", { recursive: true })
         const response = await axios({
             url: imageUrl,
             method: "GET",
-            responseType: "stream"
+            // responseType: "stream"
+            responseType: "arraybuffer" //whyyyyyy
         })
 
         const filePath = `./uploads/temp_image.jpg`
-        const writer = fs.createWriteStream(filePath)
-
-        // response.data.pipe(writer)
-        // writer.on('finish', async () => {
-        //     console.log("Image loaded to server successfully. ", filePath)
-        // })
-        // return filePath
-
-        return new Promise((resolve, reject) => {
-            response.data.pipe(writer)
-            writer.on("finish", () => {
-                console.log("Image loaded to server successfully. ", filePath)
-                resolve(filePath)
-            })
-            writer.on("error", (er) => {
-                reject(er)
-            })
-        })
+        await fs.writeFile(filePath,response.data)
+        console.log('Loaded image to server successfully')
+        return filePath
     } catch (e) {
         console.log(`Lỗi xử lý ảnh: ${e}`)
     }
@@ -37,6 +23,7 @@ export async function downloadImage(imageUrl) {
 
 export async function postToAWS(filePath) {
     try {
+        console.log('FILE PATH IS ',filePath)
         const data = await fs.readFile(filePath)
         const result = await predict(data)
         return result

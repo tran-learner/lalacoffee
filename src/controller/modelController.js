@@ -1,5 +1,6 @@
 import { SageMakerRuntimeClient, InvokeEndpointCommand } from "@aws-sdk/client-sagemaker-runtime";
 import dotenv from "dotenv";
+import { awsStringToJSON } from "./utils.js"
 
 dotenv.config();
 
@@ -20,16 +21,16 @@ const client = new SageMakerRuntimeClient({
 const predict = async (imageBuffer) => {
     try {
         const command = new InvokeEndpointCommand({
-            EndpointName: "canvas-deploy3",  
+            EndpointName: "canvas-deploy4",  
             Body: imageBuffer, // Gửi buffer ảnh trực tiếp
             ContentType: "image/png"  // Nếu gửi ảnh JPG thì đổi thành "image/jpeg"
         });
 
         const response = await client.send(command);
-        const result = new TextDecoder("utf-8").decode(response.Body);
-        console.log('RESULT IS ',result)
-        // return JSON.parse(result);
-        return result
+        let result = new TextDecoder("utf-8").decode(response.Body);
+        let resultObj = awsStringToJSON(result)
+        console.log("Predict from aws: ",resultObj)
+        return resultObj
     } catch (error) {
         console.error("Error:", error);
         return null;
