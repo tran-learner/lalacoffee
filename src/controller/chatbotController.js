@@ -86,6 +86,7 @@ async function handleMessage(sender_psid, received_message) {
             //call image handle functions
                 //get image from fb server
                 let imgURL = attachment.payload.url
+                console.log("Path of image is ", imgURL)
                 const filepath = await downloadImage(imgURL)
                 //send image to aws
                 const result = await postToAWS(filepath)
