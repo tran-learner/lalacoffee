@@ -87,11 +87,12 @@ async function handleMessage(sender_psid, received_message) {
         if (attachment.type == "image") {
             //call image handle functions
                 let imgURL = attachment.payload.url //get img at fb server
-                const filepath = await downloadImage(imgURL) //save img to server
+                const filepath = await downloadImage(imgURL, sender_psid) //save img to server
                 const result = await postToAWS(filepath)
                 //delete image
             response = {
                 "text": `${result.label}`
+                // "text":"Try without sending message from messenger"
             }
         }
         else {

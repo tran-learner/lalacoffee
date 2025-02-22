@@ -2,7 +2,7 @@ import fs from "fs/promises"
 import axios from "axios"
 import predict from "./modelController.js"
 
-export async function downloadImage(imageUrl) {
+export async function downloadImage(imageUrl, sender) {
     try {
         await fs.mkdir("./uploads", { recursive: true })
         const response = await axios({
@@ -12,7 +12,7 @@ export async function downloadImage(imageUrl) {
             responseType: "arraybuffer" //whyyyyyy
         })
 
-        const filePath = `./uploads/temp_image.jpg`
+        const filePath = `./uploads/img_${sender}.jpg`
         await fs.writeFile(filePath,response.data)
         console.log('Loaded image to server successfully')
         return filePath
