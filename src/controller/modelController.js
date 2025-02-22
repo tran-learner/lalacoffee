@@ -21,7 +21,7 @@ const client = new SageMakerRuntimeClient({
 const predict = async (imageBuffer) => {
     try {
         const command = new InvokeEndpointCommand({
-            EndpointName: "canvas-deploy4",  
+            EndpointName: "canvas-deploy-version1",  
             Body: imageBuffer, // Gửi buffer ảnh trực tiếp
             ContentType: "image/png"  // Nếu gửi ảnh JPG thì đổi thành "image/jpeg"
         });
