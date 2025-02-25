@@ -1,3 +1,5 @@
 Ko post được, server ko còn trả về text nữa Cannot POST/
     *server chỉ nhận raw binary image => thêm nhận json 
     *sai endpoint => thêm endpoint webhook
+Truy vấn không có dữ liệu
+    *lỗi policy => tạo policy cho bảng

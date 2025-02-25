@@ -36,13 +36,14 @@ export function getWebhook(req, res) {
 //=> send answer to client
 export function postWebhook(req, res) {
     console.log(req.body)
+    let page_id = req.body.entry[0].id
     let body = req.body;
     if (body.object === "page") {
         body.entry.forEach(entry => {
             let webhook_event = entry.messaging[0]
             let sender_psid = webhook_event.sender.id
             if (webhook_event.message) {
-                handleMessage(sender_psid, webhook_event.message)
+                handleMessage(sender_psid, webhook_event.message, page_id)
             }
         });
         res.status(200).send("EVENT_RECEIVED");
@@ -51,8 +52,8 @@ export function postWebhook(req, res) {
     }
 }
 
-function callSendAPI(sender_psid, response) {
-    console.log("SENDER ID IS ",sender_psid)
+function callSendAPI(sender_psid, response, page_acctkn) {
+    // console.log("SENDER ID IS ",sender_psid)
     let request_body = {
         "recipient": {
             "id": sender_psid
@@ -62,7 +63,7 @@ function callSendAPI(sender_psid, response) {
 
     request({
         "uri": "https://graph.facebook.com/v21.0/me/messages",
-        "qs": { "access_token": PAGE_ACCESS_TOKEN },
+        "qs": { "access_token": page_acctkn },
         "method": "POST",
         "json": request_body
     }, (err, res, body) => {
@@ -74,9 +75,9 @@ function callSendAPI(sender_psid, response) {
     })
 }
 
-async function handleMessage(sender_psid, received_message) {
+async function handleMessage(sender_psid, received_message, page_id) {
     let response
-    console.log('RECIEVED MESSAGE IS ',received_message)
+    // console.log('RECIEVED MESSAGE IS ',received_message)
     if (received_message.text) {
         //call text handle functions
         response = {
@@ -89,11 +90,12 @@ async function handleMessage(sender_psid, received_message) {
             //call image handle functions
                 let imgURL = attachment.payload.url //get img at fb server
                 const filepath = await downloadImage(imgURL, sender_psid) //save img to server
-                const result = await postToAWS(filepath)
+                // const result = await postToAWS(filepath)
                 //delete image
             response = {
-                "text": `${result.label}`
+                // "text": `${result.label}`
                 // "text":"Try without sending message from messenger"
+                "text":"Try without img processing"
             }
         }
         else {
@@ -102,5 +104,6 @@ async function handleMessage(sender_psid, received_message) {
             }
         }
     }
-    callSendAPI(sender_psid, response)
+    let page_acctkn = getPageAccessToken(page_id)
+    callSendAPI(sender_psid, response, page_acctkn)
 }
