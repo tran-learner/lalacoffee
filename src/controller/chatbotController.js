@@ -1,6 +1,7 @@
 import dotenv from "dotenv"
 import request from "request"
 import { downloadImage, postToAWS } from "./imageProcessController.js"
+import { getPageAccessToken } from "./databaseController.js"
 dotenv.config()
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
@@ -104,6 +105,6 @@ async function handleMessage(sender_psid, received_message, page_id) {
             }
         }
     }
-    let page_acctkn = getPageAccessToken(page_id)
+    let page_acctkn = await getPageAccessToken(page_id)
     callSendAPI(sender_psid, response, page_acctkn)
 }
