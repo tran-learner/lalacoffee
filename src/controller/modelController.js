@@ -18,7 +18,7 @@ const client = new SageMakerRuntimeClient({
 });
 
 
-const predict = async (imageBuffer) => {
+const predict = async (imageBuffer) => { //return an obj
     try {
         const command = new InvokeEndpointCommand({
             EndpointName: "canvas-deploy-version1",  

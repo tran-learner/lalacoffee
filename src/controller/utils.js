@@ -9,6 +9,7 @@ export function awsStringToJSON(string){
     obj.probabilities = JSON.parse(part0[1])
     parts[1]= parts[1].slice(0,-1).replace(/'/g,'"')
     obj.suggestions = JSON.parse(parts[1])
+    console.log(obj)
     return obj
 }
 // awsStringToJSON(`strawberryfrappe,0.5895771384239197,"[0.5895771384239197, 0.4104228913784027]","['strawberryfrappe', 'tradau']"`)

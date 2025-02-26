@@ -1,7 +1,7 @@
 import dotenv from "dotenv"
 import request from "request"
 import { downloadImage, postToAWS } from "./imageProcessController.js"
-import { getPageAccessToken } from "./databaseController.js"
+import { getShop, getSimilarDrinks } from "./databaseController.js"
 dotenv.config()
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
@@ -78,6 +78,7 @@ function callSendAPI(sender_psid, response, page_acctkn) {
 
 async function handleMessage(sender_psid, received_message, page_id) {
     let response
+    let shop = await getShop(page_id)
     // console.log('RECIEVED MESSAGE IS ',received_message)
     if (received_message.text) {
         //call text handle functions
@@ -91,7 +92,13 @@ async function handleMessage(sender_psid, received_message, page_id) {
             //call image handle functions
                 let imgURL = attachment.payload.url //get img at fb server
                 const filepath = await downloadImage(imgURL, sender_psid) //save img to server
-                // const result = await postToAWS(filepath)
+                // const result = await postToAWS(filepath) //post to aws and get the predict obj
+
+                let result = {
+                    label: matcha_frappe
+                }
+                var drinks = getSimilarDrinks(result.label, shop.shop_id) //the drinks array intended to be obj for each drink
+
                 //delete image
             response = {
                 // "text": `${result.label}`
@@ -105,6 +112,6 @@ async function handleMessage(sender_psid, received_message, page_id) {
             }
         }
     }
-    let page_acctkn = await getPageAccessToken(page_id)
+    let page_acctkn = shop.acc_tkn
     callSendAPI(sender_psid, response, page_acctkn)
 }
