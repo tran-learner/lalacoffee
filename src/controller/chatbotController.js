@@ -95,7 +95,7 @@ async function handleMessage(sender_psid, received_message, page_id) {
                 // const result = await postToAWS(filepath) //post to aws and get the predict obj
 
                 let result = {
-                    label: matcha_frappe
+                    label: "matcha_frappe"
                 }
                 var drinks = getSimilarDrinks(result.label, shop.shop_id) //the drinks array intended to be obj for each drink
 
