@@ -15,4 +15,4 @@ export async function getSimilarDrinks(label, shopid) {
     const response2 = await supabase.from('DRINKS').select('drink_name').eq('shop_id',shopid).overlaps('drink_attributes',attributes)
     console.log(response2)
 }
-getSimilarDrinks('chocolate_frappe',)
+// getSimilarDrinks('chocolate_frappe',)
