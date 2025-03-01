@@ -54,7 +54,6 @@ export function postWebhook(req, res) {
 }
 
 function callSendAPI(sender_psid, response, page_acctkn) {
-    // console.log("SENDER ID IS ",sender_psid)
     let request_body = {
         "recipient": {
             "id": sender_psid
@@ -69,7 +68,7 @@ function callSendAPI(sender_psid, response, page_acctkn) {
         "json": request_body
     }, (err, res, body) => {
         if (!err) {
-            console.log("Sent message to KT!")
+            console.log(res)
         } else {
             console.log(err)
         }
@@ -90,25 +89,37 @@ async function handleMessage(sender_psid, received_message, page_id) {
         let attachment = received_message.attachments[0]
         if (attachment.type == "image") {
             //call image handle functions
-                let imgURL = attachment.payload.url //get img at fb server
-                const filepath = await downloadImage(imgURL, sender_psid) //save img to server
-                // const result = await postToAWS(filepath) //post to aws and get the predict obj
+            let imgURL = attachment.payload.url //get img at fb server
+            const filepath = await downloadImage(imgURL, sender_psid) //save img to server
+            // const result = await postToAWS(filepath) //post to aws and get the predict obj
 
-                let result = {
-                    label: "matcha_frappe"
-                }
-                var drinks = getSimilarDrinks(result.label, shop.shop_id) //the drinks array intended to be obj for each drink
-
-                //delete image
-            response = {
-                // "text": `${result.label}`
-                // "text":"Try without sending message from messenger"
-                "text":"Try without img processing"
+            let result = {
+                label: "peach_tea"
             }
+            var drinks = await getSimilarDrinks(result.label, shop.shop_id) //the drinks array intended to be obj for each drink
+            if (drinks.length == 0)
+                response = {
+                    "text": "Hmm, có vẻ quán không có món tương tự như ảnh bạn gửi rồi."
+                        + " Chúng mình đề xuất bạn món ABC, bạn thấy thế nào?"
+                }
+            else {
+                let str = `Quán chúng mình có món ${drinks[0]} là giống nhất với ảnh bạn gửi, bạn thấy thế nào?`
+                if (drinks[1]) {
+                    str += ` Ngoài ra bạn cũng có thể thử ${drinks[1]}`
+                    if (drinks[2]) str+= ` hoặc ${drinks[2]}`
+                    str +='!'
+                }
+                response = {
+                    "text": str
+                    // "text":"Try without sending message from messenger"
+                    // "text": "Try without img processing"
+                }
+            }
+
         }
         else {
             response = {
-                "text":`Định dạng dữ liệu không được hỗ trợ xử lý bởi chatbot.`
+                "text": `Định dạng file bạn đã gửi không được hỗ trợ xử lý bởi chatbot.`
             }
         }
     }
