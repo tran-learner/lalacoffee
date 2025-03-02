@@ -11,7 +11,7 @@
   "author": "kt05",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-sagemaker-runtime": "^3.744.0",
+    "@aws-sdk/client-sagemaker-runtime": "^3.758.0",
     "@babel/core": "^7.26.0",
     "@babel/node": "^7.26.0",
     "@babel/preset-env": "^7.26.0",

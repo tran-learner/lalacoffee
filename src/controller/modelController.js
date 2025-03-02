@@ -10,7 +10,7 @@ export function writeout(){
     console.log(AWS_MODEL_ENDPOINT, AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
 }
 const client = new SageMakerRuntimeClient({
-    region: "ap-southeast-2",
+    region: "us-east-1",
     credentials: {
         accessKeyId: "AKIAR3HUONQYA3PP6PFM",
         secretAccessKey: "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"
@@ -21,7 +21,7 @@ const client = new SageMakerRuntimeClient({
 const predict = async (imageBuffer) => { //return an obj
     try {
         const command = new InvokeEndpointCommand({
-            EndpointName: "canvas-deploy-version1",  
+            EndpointName: "image-classification-2025-03-02-06-55-45-592",  
             Body: imageBuffer, // Gửi buffer ảnh trực tiếp
             ContentType: "image/png"  // Nếu gửi ảnh JPG thì đổi thành "image/jpeg"
         });
