@@ -12,7 +12,7 @@ export function getHomePage(req, res) {
 }
 
 export function getWebhook(req, res) {
-    console.log(VERIFY_TOKEN)
+    // console.log(VERIFY_TOKEN)
     // Parse the query params
     let mode = req.query["hub.mode"];
     let token = req.query["hub.verify_token"];
@@ -36,7 +36,7 @@ export function getWebhook(req, res) {
 //fb post to webhook => server consider type of data => if img, send to aws => process result from aws
 //=> send answer to client
 export function postWebhook(req, res) {
-    console.log(req.body)
+    // console.log(req.body)
     let page_id = req.body.entry[0].id
     let body = req.body;
     if (body.object === "page") {
@@ -68,7 +68,7 @@ function callSendAPI(sender_psid, response, page_acctkn) {
         "json": request_body
     }, (err, res, body) => {
         if (!err) {
-            console.log(res)
+            console.log('Sent message to Messenger!', res)
         } else {
             console.log(err)
         }
@@ -91,11 +91,11 @@ async function handleMessage(sender_psid, received_message, page_id) {
             //call image handle functions
             let imgURL = attachment.payload.url //get img at fb server
             const filepath = await downloadImage(imgURL, sender_psid) //save img to server
-            // const result = await postToAWS(filepath) //post to aws and get the predict obj
-
-            let result = {
-                label: "peach_tea"
-            }
+            const result = await postToAWS(filepath) //post to aws and get the predict obj
+            // console.log('RESULT POST: ',result)
+            // let result = {
+            //     label: "blueberry_yogurt"
+            // }
             var drinks = await getSimilarDrinks(result.label, shop.shop_id) //the drinks array intended to be obj for each drink
             if (drinks.length == 0)
                 response = {
