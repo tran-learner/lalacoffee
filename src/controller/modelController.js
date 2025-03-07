@@ -21,7 +21,7 @@ const client = new SageMakerRuntimeClient({
 const predict = async (imageBuffer) => { //return an obj
     try {
         const command = new InvokeEndpointCommand({
-            EndpointName: "image-classification-2025-03-04-09-34-56-054",  
+            EndpointName: "image-classification-2025-03-07-09-02-48-786",  
             Body: imageBuffer, // Gửi buffer ảnh trực tiếp
             ContentType: "image/png"  // Nếu gửi ảnh JPG thì đổi thành "image/jpeg"
         });
