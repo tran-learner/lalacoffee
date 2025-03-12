@@ -92,10 +92,7 @@ async function handleMessage(sender_psid, received_message, page_id) {
             let imgURL = attachment.payload.url //get img at fb server
             const filepath = await downloadImage(imgURL, sender_psid) //save img to server
             const result = await postToAWS(filepath) //post to aws and get the predict obj
-            // console.log('RESULT POST: ',result)
-            // let result = {
-            //     label: "blueberry_yogurt"
-            // }
+            console.log("95 result is ",response)
             var drinks = await getSimilarDrinks(result.label, shop.shop_id) //the drinks array intended to be obj for each drink
             if (drinks.length == 0)
                 response = {
