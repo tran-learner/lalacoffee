@@ -4,6 +4,7 @@ export async function getShop(page_id) {
     // page_id = 562135403640783
     const { data, error } = await supabase.from('SHOPS').select('shop_fanpage_acctkn, shop_id').eq('shop_fanpage_id', page_id)
     console.log(data)
+    if (error) console.log(error)
     return {
         acc_tkn: data[0].shop_fanpage_acctkn,
         shop_id: data[0].shop_id

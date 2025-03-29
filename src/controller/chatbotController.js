@@ -90,6 +90,7 @@ async function handleMessage(sender_psid, received_message, page_id) {
         if (attachment.type == "image") {
             //call image handle functions
             let imgURL = attachment.payload.url //get img at fb server
+            console.log("IMAGE URL IS ",imgURL)
             const filepath = await downloadImage(imgURL, sender_psid) //save img to server
             const result = await postToAWS(filepath) //post to aws and get the predict obj
             console.log("95 result is ",response)
