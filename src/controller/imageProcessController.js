@@ -21,11 +21,11 @@ export async function downloadImage(imageUrl, sender) {
     }
 }
 
-export async function postToAWS(filePath) {
+export async function postToImgServer(filePath) {
     try {
-        console.log('FILE PATH IS ',filePath)
         const data = await fs.readFile(filePath)
         const result = await predict(data)
+        console.log('Prediction: ',result)
         return result
     } catch (e){
         console.log('Failed to read file. ',e)

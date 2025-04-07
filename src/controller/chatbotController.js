@@ -1,7 +1,7 @@
 import dotenv from "dotenv"
 import request from "request"
-import { downloadImage, postToAWS } from "./imageProcessController.js"
-import { getShop, getSimilarDrinks } from "./databaseController.js"
+import { downloadImage, postToImgServer } from "./imageProcessController.js"
+import { getShop, getSimilarDrinks, getRecommendedDrink } from "./databaseController.js"
 dotenv.config()
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
@@ -68,7 +68,7 @@ function callSendAPI(sender_psid, response, page_acctkn) {
         "json": request_body
     }, (err, res, body) => {
         if (!err) {
-            console.log('Sent message to Messenger!', res)
+            console.log('Sent message to Messenger!')
         } else {
             console.log(err)
         }
@@ -88,36 +88,48 @@ async function handleMessage(sender_psid, received_message, page_id) {
     else if (received_message.attachments) {
         let attachment = received_message.attachments[0]
         if (attachment.type == "image") {
+
             //call image handle functions
             let imgURL = attachment.payload.url //get img at fb server
-            console.log("IMAGE URL IS ",imgURL)
+            // console.log("IMAGE URL IS ",imgURL)
             const filepath = await downloadImage(imgURL, sender_psid) //save img to server
-            const result = await postToAWS(filepath) //post to aws and get the predict obj
-            console.log("95 result is ",response)
-            var drinks = await getSimilarDrinks(result.label, shop.shop_id) //the drinks array intended to be obj for each drink
-            if (drinks.length == 0)
+            const result = await postToImgServer(filepath) //post to aws and get the predict obj
+
+            if (result.confidence < 0.3) {
+                const recommendedDrink = await getRecommendedDrink(shop.shop_id)
+                const drinkName = recommendedDrink.drink_name
                 response = {
-                    "text": "Hmm, có vẻ quán không có món tương tự như ảnh bạn gửi rồi."
-                        + " Chúng mình đề xuất bạn món ABC, bạn thấy thế nào?"
-                }
-            else {
-                let str = `Quán chúng mình có món ${drinks[0]} là giống nhất với ảnh bạn gửi, bạn thấy thế nào?`
-                if (drinks[1]) {
-                    str += ` Ngoài ra bạn cũng có thể thử ${drinks[1]}`
-                    if (drinks[2]) str+= ` hoặc ${drinks[2]}`
-                    str +='!'
-                }
-                response = {
-                    "text": str
-                    // "text":"Try without sending message from messenger"
-                    // "text": "Try without img processing"
+                    "text": `Sorry, we couldn't find any matching drinks for your photo in our menu.\nWould you like to try our newest drink - ${drinkName}?`
                 }
             }
+            else {
+                var drinks = await getSimilarDrinks(result.label, shop.shop_id) //the drinks array intended to be obj for each drink
+                if (drinks.length == 0) {
+                    const recommendedDrink = await getRecommendedDrink(shop.shop_id)
+                    const drinkName = recommendedDrink.drink_name
+                    response = {
+                        "text": `Sorry, we couldn't find any matching drinks for your photo in our menu. \nWould you like to try our newest drink - ${drinkName}?`
+                    }
+                }
+                else {
+                    let str = `We think ${drinks[0]} is the best match for your photo.`
+                    if (drinks[1]) {
+                        str += `\nYou might also like ${drinks[1]}`
+                        if (drinks[2]) str += ` or ${drinks[2]}.`
+                        str += '!'
+                    }
+                    response = {
+                        "text": str
+                        // "text":"Try without sending message from messenger"
+                        // "text": "Try without img processing"
+                    }
+                }
 
+            }
         }
         else {
             response = {
-                "text": `Định dạng file bạn đã gửi không được hỗ trợ xử lý bởi chatbot.`
+                "text": `This file format does not supported by the chatbot.`
             }
         }
     }

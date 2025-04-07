@@ -12,7 +12,6 @@ export async function getShop(page_id) {
 }
 
 export async function getSimilarDrinks(label, shopid) {
-    console.log('GSML ',label,shopid)
     const response = await supabase.from('TRAINED_DRINKS').select('attributes').eq('label', label)
     let attributes = response.data[0].attributes
     const response2 = await supabase.rpc('similardrinks',{attributes, shopid})
@@ -21,7 +20,13 @@ export async function getSimilarDrinks(label, shopid) {
         if (drinks.length==3) return
         drinks.push(element.drink_name)
     });
-    console.log('drinks are ',drinks)
+    console.log('drinks are ',drinks)    
     return drinks
+}
+
+export async function getRecommendedDrink(shopid) {
+    const response = await supabase.rpc('newest',{shopid})
+    const drink = response.data[0]
+    return drink
 }
 // getSimilarDrinks('chocolate_frappe',1)

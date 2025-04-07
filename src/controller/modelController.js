@@ -44,19 +44,19 @@ const client = new SageMakerRuntimeClient({
 // };
 
 // const urlA = 'http://127.0.0.1:8085/predict'
-const urlA = 'https://f7e1-113-161-210-237.ngrok-free.app/predict'
-
+// const urlA = 'https://f7e1-113-161-210-237.ngrok-free.app/predict'
+const urlA = process.env.IMG_SERVER
 const predict = async (imageBuffer) => {
     try {
         const formData = new FormData()
         formData.append("file", imageBuffer, "image.png")
+       
         const response = await axios.post(urlA, formData, {
             headers: {
                 ...formData.getHeaders(),
             },
         })
-
-        console.log("RESPONSE IS ",response.data)
+        // console.log("RESPONSE IS ",response.data)
         return response.data
     } catch(e){
         console.log(e)

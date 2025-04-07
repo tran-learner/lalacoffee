@@ -30,9 +30,7 @@ app.use(express.raw({ type: "image/*", limit: "50mb" }));
 initWebRoutes(app)
 app.post("/analyze", async (req, res) => {
     try {
-        console.log(`REQ BODY IS ${req.body.length}`)
         const image = req.body; // Nhận ảnh từ request
-        console.log(image)
         const result = await predict(image);
         res.json(result);
     } catch (error) {
