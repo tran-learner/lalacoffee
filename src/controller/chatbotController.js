@@ -115,7 +115,7 @@ async function handleMessage(sender_psid, received_message, page_id) {
                     let str = `We think ${drinks[0]} is the best match for your photo.`
                     if (drinks[1]) {
                         str += `\nYou might also like ${drinks[1]}`
-                        if (drinks[2]) str += ` or ${drinks[2]}.`
+                        if (drinks[2]) str += ` or ${drinks[2]}`
                         str += '!'
                     }
                     response = {
