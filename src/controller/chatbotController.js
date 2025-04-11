@@ -95,7 +95,7 @@ async function handleMessage(sender_psid, received_message, page_id) {
             const filepath = await downloadImage(imgURL, sender_psid) //save img to server
             const result = await postToImgServer(filepath) //post to aws and get the predict obj
 
-            if (result.confidence < 0.3) {
+            if (result.confidence < 0.75) {
                 const recommendedDrink = await getRecommendedDrink(shop.shop_id)
                 const drinkName = recommendedDrink.drink_name
                 response = {
