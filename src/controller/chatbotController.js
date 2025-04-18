@@ -77,62 +77,66 @@ function callSendAPI(sender_psid, response, page_acctkn) {
 
 async function handleMessage(sender_psid, received_message, page_id) {
     let response
-    let shop = await getShop(page_id)
-    // console.log('RECIEVED MESSAGE IS ',received_message)
-    if (received_message.text) {
-        //call text handle functions
-        response = {
-            "text": `You said ${received_message.text}`
-        }
-    }
-    else if (received_message.attachments) {
-        let attachment = received_message.attachments[0]
-        if (attachment.type == "image") {
-
-            //call image handle functions
-            let imgURL = attachment.payload.url //get img at fb server
-            // console.log("IMAGE URL IS ",imgURL)
-            const filepath = await downloadImage(imgURL, sender_psid) //save img to server
-            const result = await postToImgServer(filepath) //post to aws and get the predict obj
-
-            if (result.confidence < 0.75) {
-                const recommendedDrink = await getRecommendedDrink(shop.shop_id)
-                const drinkName = recommendedDrink.drink_name
-                response = {
-                    "text": `Sorry, we couldn't find any matching drinks for your photo in our menu.\nWould you like to try our newest drink - ${drinkName}?`
-                }
+    try {
+        let shop = await getShop(page_id)
+        // console.log('RECIEVED MESSAGE IS ',received_message)
+        if (received_message.text) {
+            //call text handle functions
+            response = {
+                "text": `Hi there! Could you send us a picture of your drink? That will help us find something similar on our menu for you.`
             }
-            else {
-                var drinks = await getSimilarDrinks(result.label, shop.shop_id) //the drinks array intended to be obj for each drink
-                if (drinks.length == 0) {
+        }
+        else if (received_message.attachments) {
+            let attachment = received_message.attachments[0]
+            if (attachment.type == "image") {
+
+                //call image handle functions
+                let imgURL = attachment.payload.url //get img at fb server
+                // console.log("IMAGE URL IS ",imgURL)
+                const filepath = await downloadImage(imgURL, sender_psid) //save img to server
+                const result = await postToImgServer(filepath) //post to aws and get the predict obj
+
+                if (result.confidence < 0.75) {
                     const recommendedDrink = await getRecommendedDrink(shop.shop_id)
                     const drinkName = recommendedDrink.drink_name
                     response = {
-                        "text": `Sorry, we couldn't find any matching drinks for your photo in our menu. \nWould you like to try our newest drink - ${drinkName}?`
+                        "text": `Sorry, we couldn't find any matching drinks for your photo in our menu.\nWould you like to try our newest drink - ${drinkName}?`
                     }
                 }
                 else {
-                    let str = `We think ${drinks[0]} is the best match for your photo.`
-                    if (drinks[1]) {
-                        str += `\nYou might also like ${drinks[1]}`
-                        if (drinks[2]) str += ` or ${drinks[2]}`
-                        str += '!'
+                    var drinks = await getSimilarDrinks(result.label, shop.shop_id) //the drinks array intended to be obj for each drink
+                    if (drinks.length == 0) {
+                        const recommendedDrink = await getRecommendedDrink(shop.shop_id)
+                        const drinkName = recommendedDrink.drink_name
+                        response = {
+                            "text": `Sorry, we couldn't find any matching drinks for your photo in our menu. \nWould you like to try our newest drink - ${drinkName}?`
+                        }
                     }
-                    response = {
-                        "text": str
-                        // "text":"Try without sending message from messenger"
-                        // "text": "Try without img processing"
+                    else {
+                        let str = `We think ${drinks[0]} is the best match for your photo.`
+                        if (drinks[1]) {
+                            str += `\nYou might also like ${drinks[1]}`
+                            if (drinks[2]) str += ` or ${drinks[2]}`
+                            str += '!'
+                        }
+                        response = {
+                            "text": str
+                            // "text":"Try without sending message from messenger"
+                            // "text": "Try without img processing"
+                        }
                     }
-                }
 
+                }
+            }
+            else {
+                response = {
+                    "text": `I'm currently designed to work with images. Would you be able to share a photo of your drink instead?`
+                }
             }
         }
-        else {
-            response = {
-                "text": `This file format does not supported by the chatbot.`
-            }
-        }
+        let page_acctkn = shop.acc_tkn
+        callSendAPI(sender_psid, response, page_acctkn)
+    } catch (e) {
+        console.log(e)
     }
-    let page_acctkn = shop.acc_tkn
-    callSendAPI(sender_psid, response, page_acctkn)
 }
