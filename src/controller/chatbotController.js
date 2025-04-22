@@ -36,7 +36,7 @@ export function getWebhook(req, res) {
 //fb post to webhook => server consider type of data => if img, send to aws => process result from aws
 //=> send answer to client
 export function postWebhook(req, res) {
-    console.log(req)
+    console.log(req.body)
     let page_id = req.body.entry[0].id
     let body = req.body;
     if (body.object === "page") {
@@ -47,7 +47,7 @@ export function postWebhook(req, res) {
                 handleMessage(sender_psid, webhook_event.message, page_id)
             }
         });
-        res.status(200).send("EVENT_RECEIVED");
+        res.status(200).send("Event recieved.");
     } else {
         res.sendStatus(404);
     }
