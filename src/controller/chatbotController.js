@@ -36,7 +36,7 @@ export function getWebhook(req, res) {
 //fb post to webhook => server consider type of data => if img, send to aws => process result from aws
 //=> send answer to client
 export function postWebhook(req, res) {
-    // console.log(req.body)
+    console.log(req)
     let page_id = req.body.entry[0].id
     let body = req.body;
     if (body.object === "page") {
